@@ -1,0 +1,47 @@
+file             Name of the file                           2014-05-14-17:05:42_0000032532221952.000000_01.ar
+nbin             Number of pulse phase bins                 1024
+nchan            Number of frequency channels               1024
+npol             Number of polarizations                    4
+nsubint          Number of sub-integrations                 1
+type             Observation type                           Pulsar
+site             Telescope name                             PARKES
+name             Source name                                R050.842-54.76
+coord            Source coordinates                         22:34:06.269-12:18:46.48
+freq             Centre frequency (MHz)                     1382
+bw               Bandwidth (MHz)                            -400
+dm               Dispersion measure (pc/cm^3)               0
+rm               Rotation measure (rad/m^2)                 0
+dmc              Dispersion corrected                       0
+rmc              Faraday Rotation corrected                 0
+polc             Polarization calibrated                    0
+scale            Data units                                 FluxDensity
+state            Data state                                 Coherence
+length           Observation duration (s)                   2.219968
+int*:<name>      attribute names depend on vector element   
+dspsr:soft       Reduction software identifier              dspsr
+dspsr:ntot       Total number of time samples               0
+dspsr:nblock     Number of time samples per block           0
+dspsr:nover      Number of time samples in block overlap    0
+dspsr:state      State of the input timeseries              Nyquist
+dspsr:nfft       Number of time samples in each FFT         0
+dspsr:npos       Number of time samples in positive wrap    0
+dspsr:nneg       Number of time samples in negative wrap    0
+dspsr:nchan      Number of frequency channels               0
+dspsr:fres       Frequency resolution factor                0
+dspsr:tres       Time resolution factor                     0
+dspsr:tint       Time integration factor                    0
+dspsr:scale      Final scale factor                         1
+rcvr:name        Receiver name                              MULTI
+rcvr:basis       Basis of receptors                         lin
+rcvr:hand        Hand of receptor basis                     +1
+rcvr:sa          Symmetry angle of receptor basis           45deg
+rcvr:rph         Reference source phase                     0deg
+rcvr:fdc         Receptor basis corrected                   0
+rcvr:prc         Receptor projection corrected              0
+rcvr:ta          Tracking angle of feed                     0deg
+be:name          Name of the backend instrument             BPSR
+be:phase         Phase convention of backend                +1
+be:dcc           Downconversion conjugation corrected       0
+be:phc           Phase convention corrected                 0
+be:delay         Backend propn delay from digi. input.      0
+
