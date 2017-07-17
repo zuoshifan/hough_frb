@@ -49,6 +49,22 @@ plt.ylabel('Frequency [GHz]')
 plt.savefig(outdir+'I.png')
 plt.close()
 
+# mask data based on a given threshold
+threshold = 3.0
+med = np.median(I)
+abs_diff = np.abs(I - med)
+mad = np.median(abs_diff) / 0.6745
+Im = np.where(abs_diff>threshold*mad, I-med, np.nan) # subtract median
+
+# plot Im
+plt.figure()
+plt.imshow(Im.T, origin='lower', aspect='auto', extent=(t[0], t[-1], f[0], f[-1]), cmap='gray')
+plt.xlabel('Time [ms]')
+plt.ylabel('Frequency [GHz]')
+plt.savefig(outdir+'Im.png')
+plt.close()
+
+
 # save I
 with h5py.File(outdir+'I.hdf5', 'w') as f:
     f.create_dataset('I', data=I)
