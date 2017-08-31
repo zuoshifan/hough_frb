@@ -16,6 +16,8 @@ fl = 0.4 # lower bound of freq, GHz
 fh = 0.8 # uper bound of freq, GHz
 Nf = 2048 # number of freq
 Nt = 2048 # number of time
+# Nf = 512 # number of freq
+# Nt = 512 # number of time
 
 f = np.linspace(fl, fh, Nf)
 t = d * f**-2
@@ -46,7 +48,8 @@ plt.figure()
 plt.imshow(I.T, origin='lower', aspect='auto', extent=(t[0], t[-1], f[0], f[-1]), cmap='gray')
 plt.xlabel('Time [ms]')
 plt.ylabel('Frequency [GHz]')
-plt.savefig(outdir+'I.png')
+# plt.colorbar()
+plt.savefig(outdir+'I_1.png')
 plt.close()
 
 # mask data based on a given threshold
@@ -61,7 +64,8 @@ plt.figure()
 plt.imshow(Im.T, origin='lower', aspect='auto', extent=(t[0], t[-1], f[0], f[-1]), cmap='gray')
 plt.xlabel('Time [ms]')
 plt.ylabel('Frequency [GHz]')
-plt.savefig(outdir+'Im.png')
+# plt.colorbar()
+plt.savefig(outdir+'Im_1.png')
 plt.close()
 
 
