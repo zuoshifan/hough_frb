@@ -45,11 +45,11 @@ if not os.path.exists(outdir):
 
 # plot I
 plt.figure()
-plt.imshow(I.T, origin='lower', aspect='auto', extent=(t[0], t[-1], f[0], f[-1]), cmap='gray')
+plt.imshow(I.T, origin='lower', aspect='auto', extent=(tl, th, f[0], f[-1]), cmap='gray')
 plt.xlabel('Time [ms]')
 plt.ylabel('Frequency [GHz]')
 # plt.colorbar()
-plt.savefig(outdir+'I_1.png')
+plt.savefig(outdir+'I.png')
 plt.close()
 
 # mask data based on a given threshold
@@ -61,11 +61,11 @@ Im = np.where(abs_diff>threshold*mad, I-med, np.nan) # subtract median
 
 # plot Im
 plt.figure()
-plt.imshow(Im.T, origin='lower', aspect='auto', extent=(t[0], t[-1], f[0], f[-1]), cmap='gray')
+plt.imshow(Im.T, origin='lower', aspect='auto', extent=(tl, th, f[0], f[-1]), cmap='gray')
 plt.xlabel('Time [ms]')
 plt.ylabel('Frequency [GHz]')
 # plt.colorbar()
-plt.savefig(outdir+'Im_1.png')
+plt.savefig(outdir+'Im.png')
 plt.close()
 
 
