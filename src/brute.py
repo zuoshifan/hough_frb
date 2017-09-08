@@ -35,7 +35,7 @@ def dedisp(I, time, freq, dl, dh, nd=None):
         I1 = np.zeros_like(I)
         for fi in range(nf):
             delta_t = d * (freq[fi]**-2 - cf**-2) # time difference relative to cf
-            I1[fi] = shift(I[fi], -delta_t/dt)
+            I1[fi] = shift(I[fi], -np.int(np.around(delta_t/dt)))
         B[di] = I1.sum(axis=0)
 
     return B
