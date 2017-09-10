@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 
     /* for timing */
     int tm_use, num=10;
-    float tms[7]; /* to record all timings, in us */
+    float tms[12]; /* to record all timings, in us */
     struct timeval start, end;
 
     /* brute force dedispersion */
