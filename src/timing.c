@@ -3,6 +3,11 @@
 #include <math.h>
 #include <sys/time.h>
 
+
+# define FRB 0  // timing for FRB010125
+// # define FRB 1  // timing for FRB110220
+
+#if FRB == 0
 #define frb "FRB010125"
 #define indir "../frb_data/"
 #define file "5.4ms.cube"
@@ -16,6 +21,22 @@
 #define Nt 500
 #define Nf 96
 
+#elif FRB == 1
+#define frb "FRB110220"
+#define indir "../frb_data/"
+#define file "3.4ms.cube"
+#define Dl 800.0 /* lower bound of DM */
+#define Dh 1200.0 /* uper bound of DM */
+#define ND 2000 /* number of DM */
+#define DM 4.5
+#define dl Dl * DM
+#define dh Dh * DM
+#define dt 4.0
+#define Nt 500
+#define Nf 1024
+
+#endif
+
 
 #define min(a,b)                                \
     ({ __typeof__ (a) _a = (a);                 \
@@ -27,133 +48,47 @@
         __typeof__ (b) _b = (b);                \
         _a > _b ? _a : _b; })
 
-void insertion_sort(float *a, int n)
-// Insertion sort array a of length n
-{
-    int i, j;
-    float key;
 
-    for(j = 1; j < n; j++)
-    {
-        key = a[j];
-        // insert a[j] in the correct position a[0...(j-1)]
-        i = j - 1;
-        while ((i >= 0) && (a[i] > key))
-        {
-            a[i + 1] = a[i];
-            i--;
-        }
-        a[i+1] = key;
-    }
+int comp (const void * elem1, const void * elem2)
+{
+    float f = *((float*)elem1);
+    float s = *((float*)elem2);
+    if (f > s) return 1;
+    if (f < s) return -1;
+    return 0;
 }
 
 
-int partition(float *a, int n, float x)
-// Partition array a of length n around x;
-// Return the number of elements to the left of the pivot.
+float median(float *a, int n, int overwrite)
+// get the median of an array a of length n,
+// a will be changed if overwrite=1, else unchanged
 {
-    int i, j;
-    float tmp;
-
-    // First find the pivot and place at the end
-    for(i = 0; i < n; i++)
+    float *a1;
+    if(overwrite==0) /* copy a to a1, so unchange a */
     {
-        if(a[i] == x)
-        /* if(fabs(a[i] - x) < 1.0e-8) */
-        {
-            a[i] = a[n-1];
-            a[n-1] = x;
-        }
+        a1 = (float *)malloc(n * sizeof(float));
+        int i;
+        for(i=0; i<n; i++)
+            a1[i] = a[i];
+    }
+    else /* change a inplace */
+    {
+        a1 = a;
     }
 
-    i = 0;
-    for(j = 0; j < (n-1); j++)
+    /* sort a1 */
+    qsort(a1, n, sizeof(float), comp);
+
+    int m = n/2;
+    if (n % 2 == 1)
     {
-        if(a[j] <= x)
-        {
-            tmp = a[j];
-            a[j] = a[i];
-            a[i] = tmp;
-            i++;
-        }
-    }
-
-    // Place the pivot in the correct position
-    a[n-1] = a[i];
-    a[i] = x;
-
-    return i;
-}
-
-float ith_select(float *a, int i, int n)
-// Select the ith element (indexed from 0) from the array of length n
-// using the median of medians algorithm
-// https://en.wikipedia.org/wiki/Median_of_medians
-{
-    int j, l;
-    float tmp;
-
-    if(n == 1)
-    {
-        return a[0];
-    }
-
-    int n_meds = 0;
-    for(j = 0; j < n; j += 5)
-    {
-        l = min(5, n - j);
-        insertion_sort(a + j, l);
-        tmp = a[j/5];
-        a[j/5] = a[j + l/2];
-        a[j + l/2] = tmp;
-        n_meds++;
-    }
-
-    float median_of_medians;
-    if(n_meds > 1)
-    {
-        median_of_medians = ith_select(a, n_meds/2, n_meds);
+        return a1[m];
     }
     else
     {
-        median_of_medians = a[0];
-    }
-
-    int k = partition(a, n, median_of_medians);
-
-    if(k == i)
-    {
-        return median_of_medians;
-    }
-    else if (i < k)
-    {
-        return ith_select(a, i, k);
-    }
-    else
-    {
-        return ith_select(a + k, i - k, n - k);
+        return (a1[m-1] + a1[m]) / 2.0;
     }
 }
-
-/* float median(float *a, int n, int overwrite) */
-/* // get the median of an array a of length n, */
-/* // a will be changed if overwrite=1, else unchanged */
-/* { */
-/*     float *a1; */
-/*     if(overwrite==0) /\* copy a to a1, so unchange a *\/ */
-/*     { */
-/*         a1 = (float *)malloc(n * sizeof(float)); */
-/*         int i; */
-/*         for(i=0; i<n; i++) */
-/*             a1[i] = a[i]; */
-/*     } */
-/*     else /\* change a inplace *\/ */
-/*     { */
-/*         a1 = a; */
-/*     } */
-
-/*     return ith_select(a1, n/2, n); */
-/* } */
 
 
 int brute_dedisp(float **I_ft, float *time, float *freq, int nt, int nf, float dl1, float dh1, int nd, float **B)
@@ -242,11 +177,12 @@ int hough_transform(float **I_tf, float *time, float *freq, int nt, int nf, floa
     len = nt * nf;
     /* compute median */
     I = (float *)malloc(len * sizeof(float));
+    /* copy I_tf to an 1d array */
     for(i=0; i<nt; i++)
         for(j=0; j<nf; j++)
             I[i*nf+j] = I_tf[i][j];
-    med = ith_select(I, len/2, len);
-    free(I);
+    med = median(I, len, 0); /* do not change I */
+    /* printf("med = %f\n", med); */
 
     Im = (float *)malloc(len * sizeof(float));
     t = (float *)malloc(len * sizeof(float));
@@ -254,20 +190,18 @@ int hough_transform(float **I_tf, float *time, float *freq, int nt, int nf, floa
     if(threshold > 0.0)
     {
         /* compute MAD */
-        float *abs_diff = (float *)malloc(len * sizeof(float));
-        float *abs_diff1 = (float *)malloc(len * sizeof(float));
-        for(i=0; i<nt; i++)
-            for(j=0; j<nf; j++)
-            {
-                abs_diff[i*nf+j] = fabs(I_tf[i][j] - med);
-                abs_diff1[i*nf+j] = abs_diff[i*nf+j];
-            }
-        mad = ith_select(abs_diff, len/2, len); /* will change abs_diff */
+        for(i=0; i<len; i++)
+        {
+            /* compute abs_diff */
+            I[i] = fabs(I[i] - med);
+        }
+        mad = median(I, len, 0); /* do not change I */
         mad = mad / 0.6745;
+        /* printf("mad = %f\n", mad); */
         for(i=0; i<nt; i++)
             for(j=0; j<nf; j++)
             {
-                if(abs_diff1[i] > threshold*mad)
+                if(I[i] > threshold*mad)
                 {
                     Im[cnt] = I_tf[i][j] - med; /* subtract mean */
                     t[cnt] = time[i];
@@ -275,8 +209,6 @@ int hough_transform(float **I_tf, float *time, float *freq, int nt, int nf, floa
                     cnt++;
                 }
             }
-        free(abs_diff);
-        free(abs_diff1);
     }
     else
     {
@@ -289,6 +221,8 @@ int hough_transform(float **I_tf, float *time, float *freq, int nt, int nf, floa
                 cnt++;
             }
     }
+
+    /* printf("cnt = %d\n", cnt); */
 
     if (cnt == 0)
     {
@@ -310,12 +244,14 @@ int hough_transform(float **I_tf, float *time, float *freq, int nt, int nf, floa
     }
 
     /* free memory */
+    free(I);
     free(Im);
     free(t);
     free(f);
 
     return 0;
 }
+
 
 
 int main(int argc, char *argv[])
