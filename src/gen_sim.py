@@ -18,6 +18,8 @@ Nf = 2048 # number of freq
 Nt = 2048 # number of time
 # Nf = 512 # number of freq
 # Nt = 512 # number of time
+# Nf = 200 # number of freq
+# Nt = 200 # number of time
 
 f = np.linspace(fl, fh, Nf)
 t = d * f**-2
@@ -30,6 +32,7 @@ dt = (th - tl) / Nt
 sigma_n = 1.0 # sigma of noise
 sigma_s = 3.0 # sigma of signal
 mu_s = 3.0    # mean of signal
+# mu_s = 2.5    # mean of signal
 I = sigma_n * np.random.randn(Nt, Nf) # initialize I to noise
 # I = np.zeros((Nt, Nf)) # initialize I to noise
 
@@ -37,7 +40,11 @@ for fi in range(Nf):
     ti = np.int(np.around((t[fi] - tl) / dt))
     ti = max(0, ti)
     ti = min(Nt-1, ti)
-    I[ti, fi] += (mu_s + sigma_s * np.random.randn())
+    val = (mu_s + sigma_s * np.random.randn())
+    I[ti, fi] += val
+    # for i in range(-1, 2):
+    #     if 0 <= ti+i and ti+i <= Nt-1:
+    #         I[ti+i, fi] += val
 
 # save generated data
 if not os.path.exists(outdir):
