@@ -37,15 +37,18 @@ p = np.argmax(A)
 Cp = p / ND
 Dp = p % ND
 print 'peak at: (DM, offset) = (%g, %g), with value %g' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p])
-f = open(outdir+'peak.txt', 'w')
-f.write('peak at: (DM, offset) = (%g, %g), with value %g\n' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p]))
-f.close()
+# compute peak-to-median ratio (PMR)
+pmr = np.max(A) / np.median(A[A>0])
+print 'peak-to-median ratio: %g' % pmr
+# f = open(outdir+'peak.txt', 'w')
+# f.write('peak at: (DM, offset) = (%g, %g), with value %g\n' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p]))
+# f.close()
 
-# plot A
-plt.figure()
-plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
-plt.xlabel('DM / pc cm${}^{-3}$')
-plt.ylabel('offset / ms')
-# plt.colorbar()
-plt.savefig(outdir+'A_1.png')
-plt.close()
+# # plot A
+# plt.figure()
+# plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
+# plt.xlabel('DM / pc cm${}^{-3}$')
+# plt.ylabel('offset / ms')
+# # plt.colorbar()
+# plt.savefig(outdir+'A_1.png')
+# plt.close()
