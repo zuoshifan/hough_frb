@@ -36,19 +36,24 @@ if not os.path.exists(outdir):
 p = np.argmax(A)
 Cp = p / ND
 Dp = p % ND
-print 'peak at: (DM, offset) = (%g, %g), with value %g' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p])
 # compute peak-to-median ratio (PMR)
-pmr = np.max(A) / np.median(A[A>0])
-print 'peak-to-median ratio: %g' % pmr
-# f = open(outdir+'peak.txt', 'w')
-# f.write('peak at: (DM, offset) = (%g, %g), with value %g\n' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p]))
-# f.close()
+mx = np.max(A)
+med = np.median(A[A>0])
+pmr = mx / med
+msg = 'peak at: (DM, offset) = (%g, %g), with value %g, PMR %g' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p], pmr)
+print msg
+# # compute peak-to-median ratio (PMR)
+# pmr = np.max(A) / np.median(A[A>0])
+# print 'peak-to-median ratio: %g' % pmr
+f = open(outdir+'peak.txt', 'w')
+f.write('%s\n' % msg)
+f.close()
 
-# # plot A
-# plt.figure()
-# plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
-# plt.xlabel('DM / pc cm${}^{-3}$')
-# plt.ylabel('offset / ms')
-# # plt.colorbar()
-# plt.savefig(outdir+'A_1.png')
-# plt.close()
+# plot A
+plt.figure()
+plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
+plt.xlabel('DM / pc cm${}^{-3}$')
+plt.ylabel('offset / ms')
+# plt.colorbar()
+plt.savefig(outdir+'A_1.png')
+plt.close()

@@ -31,8 +31,10 @@ dt = (th - tl) / Nt
 
 sigma_n = 1.0 # sigma of noise
 sigma_s = 3.0 # sigma of signal
-mu_s = 3.0    # mean of signal
-# mu_s = 2.5    # mean of signal
+# sigma_s = 0.5 # sigma of signal
+# mu_s = 3.0    # mean of signal
+# mu_s = 0.5    # mean of signal, lower than sigma_n
+mu_s = 0.0    # mean of signal, lower than sigma_n
 I = sigma_n * np.random.randn(Nt, Nf) # initialize I to noise
 # I = np.zeros((Nt, Nf)) # initialize I to noise
 
