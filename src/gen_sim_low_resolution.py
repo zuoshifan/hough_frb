@@ -1,0 +1,103 @@
+import os
+import argparse
+import numpy as np
+import h5py
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
+parser = argparse.ArgumentParser(description='Generate low resolution sim data and plot its image.')
+parser.add_argument('-m', '--vmax', type=float, default=None, help='Max value of plot.')
+parser.add_argument('-n', '--vmin', type=float, default=None, help='Min value of plot.')
+parser.add_argument('-c', '--cmap', type=str, default='jet', help='Color map.')
+parser.add_argument('-b', '--colorbar', action='store_false', help='Whether to show colorbar, default show.')
+args = parser.parse_args()
+
+
+outdir = '../sim/'
+
+DM = 1000.0 # pc cm^-3
+d = 4.15 * DM
+t0 = 0.0 # time offset
+
+fl = 0.4 # lower bound of freq, GHz
+fh = 0.8 # uper bound of freq, GHz
+Nf = 512 # number of freq
+Nt = 512 # number of time
+
+f = np.linspace(fl, fh, Nf)
+t = d * f**-2
+t -= t.min() # make time offset to 0
+t += t0 # make time offset to t0
+tl = t.min()
+th = t.max()
+dt = (th - tl) / Nt
+
+sigma_n = 1.0 # sigma of noise
+sigma_s = 3.0 # sigma of signal
+# sigma_s = 0.5 # sigma of signal
+# mu_s = 3.0    # mean of signal
+# mu_s = 0.5    # mean of signal, lower than sigma_n
+mu_s = 0.0    # mean of signal, lower than sigma_n
+I = sigma_n * np.random.randn(Nt, Nf) # initialize I to noise
+# I = np.zeros((Nt, Nf)) # initialize I to noise
+
+for fi in range(Nf):
+    ti = np.int(np.around((t[fi] - tl) / dt))
+    ti = max(0, ti)
+    ti = min(Nt-1, ti)
+    val = (mu_s + sigma_s * np.random.randn())
+    I[ti, fi] += val
+    for i in range(-1, 2):
+        if 0 <= ti+i and ti+i <= Nt-1:
+            I[ti+i, fi] += val
+
+# save generated data
+if not os.path.exists(outdir):
+    os.mkdir(outdir)
+
+# plot I
+plt.figure()
+# plt.imshow(I.T, origin='lower', aspect='auto', extent=(tl, th, f[0], f[-1]), cmap=args.cmap, vmax=args.vmax)
+plt.imshow(I.T, origin='lower', aspect='auto', extent=(tl, th, f[0], f[-1]), cmap=args.cmap, vmin=args.vmin, vmax=args.vmax)
+plt.xlabel('Time [ms]')
+plt.ylabel('Frequency [GHz]')
+if args.colorbar:
+    plt.colorbar()
+plt.savefig(outdir+'I_%dx%d.png' % (Nf, Nt))
+plt.close()
+
+# mask data based on a given threshold
+threshold = 3.0
+med = np.median(I)
+abs_diff = np.abs(I - med)
+mad = np.median(abs_diff) / 0.6745
+Im = np.where(abs_diff>threshold*mad, I-med, np.nan) # subtract median
+
+# plot Im
+plt.figure()
+plt.imshow(Im.T, origin='lower', aspect='auto', extent=(tl, th, f[0], f[-1]), cmap=args.cmap, vmin=args.vmin, vmax=args.vmax)
+plt.xlabel('Time [ms]')
+plt.ylabel('Frequency [GHz]')
+if args.colorbar:
+    plt.colorbar()
+plt.savefig(outdir+'Im_%dx%d.png' % (Nf, Nt))
+plt.close()
+
+
+# save I
+with h5py.File(outdir+'I_%dx%d.hdf5' % (Nf, Nt), 'w') as f:
+    f.create_dataset('I', data=I)
+    f.attrs['axes'] = '(time, freq)'
+    f.attrs['DM'] = DM
+    f.attrs['t0'] = t0
+    f.attrs['fl'] = fl
+    f.attrs['fh'] = fh
+    f.attrs['Nf'] = Nf
+    f.attrs['tl'] = tl
+    f.attrs['th'] = th
+    f.attrs['Nt'] = Nt
+    f.attrs['sigma_n'] = sigma_n
+    f.attrs['sigma_s'] = sigma_s
+    f.attrs['mu_n'] = mu_s

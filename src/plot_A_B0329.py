@@ -9,6 +9,10 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Plot accumulator.')
 parser.add_argument('-m', '--vmax', type=float, default=None, help='Max value of plot.')
+parser.add_argument('-n', '--vmin', type=float, default=None, help='Min value of plot.')
+parser.add_argument('-c', '--cmap', type=str, default='jet', help='Color map.')
+parser.add_argument('-b', '--colorbar', action='store_false', help='Whether to show colorbar, default show.')
+parser.add_argument('-s', '--save_peak', action='store_false', help='Whether to save peak value to file, default save.')
 args = parser.parse_args()
 
 
@@ -39,16 +43,24 @@ p = np.argmax(np.abs(A))
 Cp = p / ND
 Dp = p % ND
 print 'peak at: (DM, offset) = (%g, %g), with value %g' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p])
-f = open(outdir+'peak.txt', 'w')
-f.write('peak at: (DM, offset) = (%g, %g), with value %g\n' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p]))
-f.close()
+if args.save_peak:
+    f = open(outdir+'peak.txt', 'w')
+    f.write('peak at: (DM, offset) = (%g, %g), with value %g\n' % (Dl+Dp*dD, Cl+Cp*dC, A.flatten()[p]))
+    f.close()
 
 # plot A
 plt.figure()
-plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
-plt.plot(Dl+Dp*dD, Cl+Cp*dC, 'r+', markersize=15.0)
-plt.plot(Dl+Dp*dD, Cl+Cp*dC-720, 'r+', markersize=15.0)
-plt.plot(Dl+Dp*dD, Cl+Cp*dC+708, 'r+', markersize=15.0)
+# plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap='gray', vmax=args.vmax)
+A = np.abs(A) # negative peak in original data
+plt.imshow(A, aspect='auto', extent=[Dl, Dh, Ch, Cl], cmap=args.cmap, vmin=args.vmin, vmax=args.vmax)
+if args.colorbar:
+    plt.colorbar()
+plt.scatter(Dl+Dp*dD, Cl+Cp*dC, marker='+', c='r', s=60, linewidth=1.5)
+plt.scatter(Dl+Dp*dD, Cl+Cp*dC-720, marker='+', c='r', s=60, linewidth=1.5)
+plt.scatter(Dl+Dp*dD, Cl+Cp*dC+708, marker='+', c='r', s=60, linewidth=1.5)
+# plt.plot(Dl+Dp*dD, Cl+Cp*dC, 'r+', markersize=15.0)
+# plt.plot(Dl+Dp*dD, Cl+Cp*dC-720, 'r+', markersize=15.0)
+# plt.plot(Dl+Dp*dD, Cl+Cp*dC+708, 'r+', markersize=15.0)
 plt.xlim(Dl, Dh)
 plt.ylim(Ch, Cl)
 plt.xlim(Dl, Dh)
@@ -56,6 +68,5 @@ plt.ylim(Ch, Cl)
 # plt.scatter(Dl+Dp*dD, Cl+Cp*dC, s=50, c='r', marker='+')
 plt.xlabel('DM / pc cm${}^{-3}$')
 plt.ylabel('offset / ms')
-# plt.colorbar()
-plt.savefig(outdir+'A1.png')
+plt.savefig(outdir+'Ac1.png')
 plt.close()

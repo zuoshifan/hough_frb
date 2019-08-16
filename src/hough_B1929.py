@@ -10,7 +10,8 @@ fl = 'I.hdf5'
 
 threshold = 3.0
 Dl = 0.0 # lower bound of DM
-Dh = 100.0 # uper bound of DM
+# Dh = 100.0 # uper bound of DM
+Dh = 8.0 # uper bound of DM
 ND = 4000 # number of DM
 NC = 2000 # number of time offeset
 
