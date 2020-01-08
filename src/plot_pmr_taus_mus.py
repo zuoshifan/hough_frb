@@ -41,10 +41,10 @@ for i in range(4):
 plt.legend()
 plt.xlim(-0.2, 6.2)
 ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-plt.xlabel(r'$\tau$')
+plt.xlabel(r'$\tau$', fontsize=16)
 if args.type == 'dB':
-    plt.ylabel('PMR / dB')
+    plt.ylabel('PMR / dB', fontsize=16)
 else:
-    plt.ylabel('PMR')
+    plt.ylabel('PMR', fontsize=16)
 plt.savefig(outdir+'pmr_taus_mus_%s.png' % args.type)
 plt.close()

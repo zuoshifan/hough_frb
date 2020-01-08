@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# generate low resolution sim and plot
-python gen_sim_low_resolution.py -n -10 -m 10
+# # generate low resolution sim and plot
+# python gen_sim_low_resolution.py -n -10 -m 10
 
-# plot sim A
-python plot_A_sim.py -n -200 -m 200
-python plot_A3d_sim.py
+# # plot sim A
+# python plot_A_sim.py -n -200 -m 200
+# python plot_A3d_sim.py
 
 
 # # plot image of pulsars
@@ -50,9 +50,9 @@ python plot_A_110220.py -n -26 -m 26
 python plot_A_110523.py -n -600 -m 600
 python plot_A_110626.py -n -10 -m 10
 python plot_A_110703.py -n -4 -m 4
-plot_A_120127.py -n -4 -m 4
+python plot_A_120127.py -n -4 -m 4
 python plot_A_140514.py -n -160 -m 160
 
-# plot PMR
-python plot_pmr_sigmans_taus.py
-python plot_pmr_taus_mus.py
+# # plot PMR
+# python plot_pmr_sigmans_taus.py
+# python plot_pmr_taus_mus.py

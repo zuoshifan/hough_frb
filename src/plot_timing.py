@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from scipy.stats import norm
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -27,15 +28,23 @@ tms = np.array(tms)
 tms *= 1.0e-3 # to ms
 ths = [ 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0 ]
 
+x = np.linspace(0, 5.0, 200)
+y = 2.0 * norm.cdf(-x)
+
 # plot
 fig, ax = plt.subplots()
 plt.axhline(tms[0], label='brute force')
 plt.plot(ths, tms[1:], 'g-', label='Hought transform')
 plt.plot(ths, tms[1:], 'ro')
+plt.plot(x, y*tms[1], 'k-', label='Survival function')
 plt.xlim(-0.2, 5.2)
 ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-plt.xlabel(r'$\tau$')
-plt.ylabel('Time [ms]')
+plt.xlabel(r'$\tau$', fontsize=16)
+plt.ylabel('Time [ms]', fontsize=16)
 plt.legend()
-plt.savefig(outdir+'timing.png')
+# ax = plt.gca().twinx()
+# ax.plot(x, y*tms[1], 'k-')
+# ax.set_xlim(-0.2, 5.2)
+# ax.set_ylabel(r'$2\Phi(-\tau)$')
+plt.savefig(outdir+'timing1.png')
 plt.close()

@@ -37,10 +37,10 @@ for i in range(4):
 plt.legend()
 plt.xlim(0.3, 6.2)
 ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-plt.xlabel(r'$\sigma_n$')
+plt.xlabel(r'$\sigma_n$', fontsize=16)
 if args.type == 'dB':
-    plt.ylabel('PMR / dB')
+    plt.ylabel('PMR / dB', fontsize=16)
 else:
-    plt.ylabel('PMR')
+    plt.ylabel('PMR', fontsize=16)
 plt.savefig(outdir+'pmr_sigmans_tau_%s.png' % args.type)
 plt.close()
