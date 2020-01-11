@@ -2,6 +2,34 @@ import numpy as np
 
 
 def hough_transform(I, time, freq, dl, dh, nd=None, t0l=None, t0h=None, nt0=None, threshold=3.0, comm=None):
+    """Hough transform algorithm.
+
+    Parameters
+    ----------
+    I : 2D np.ndarray
+        Input data image, row time, column freq, both in ascending. order
+    time : 1D np.ndarray
+        The corresponding time of `I`, in ms.
+    freq : 1D np.ndarray
+        The corresponding frequency of `I`, in GHz.
+    dl : float
+        Lowest d = 4.15 DM.
+    dh : float
+        High d = 4.15 DM.
+    nd : integer
+        Number of d.
+    t0l : float
+        Lowest time offset t0, in ms.
+    t0h : float
+        Highest time offset t0, in ms.
+    nt0 : integer
+        Number of time offset t0.
+    threshold : float
+        How many sigmas to truncate the data.
+    comm : MPI communicator
+        MPI communicator. Required if executed parallelly by using MPI.
+    """
+
     try:
         from caput import mpiutil
     except ImportError:
